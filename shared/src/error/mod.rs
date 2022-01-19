@@ -97,3 +97,36 @@ impl std::fmt::Display for ExitCode {
         write!(f, "exit code: {}", *self as u32)
     }
 }
+
+#[repr(u32)]
+#[derive(Copy, Clone, Eq, Debug, PartialEq, Error, FromPrimitive)]
+pub enum SyscallErrorCode {
+    IllegalArgument = 1,
+    IllegalActor = 2,
+    LimitExceeded = 3,
+    AssertionFailed = 4,
+    InsufficientFunds = 5,
+    NotFound = 6,
+    InvalidHandle = 7,
+    IllegalCid = 8,
+    IllegalCodec = 9,
+    Serialization = 10,
+}
+
+impl std::fmt::Display for SyscallErrorCode {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        use SyscallErrorCode::*;
+        f.write_str(match *self {
+            IllegalArgument => "illegal argument",
+            IllegalActor => "illegal actor",
+            LimitExceeded => "limit exceeded",
+            AssertionFailed => "filecoin assertion failed",
+            InsufficientFunds => "insufficient funds",
+            NotFound => "resource not found",
+            InvalidHandle => "invalid ipld block handle",
+            IllegalCid => "illegal cid specification",
+            IllegalCodec => "illegal ipld codec",
+            Serialization => "serialization error",
+        })
+    }
+}
