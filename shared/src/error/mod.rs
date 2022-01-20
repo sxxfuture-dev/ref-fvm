@@ -100,7 +100,7 @@ impl std::fmt::Display for ExitCode {
 
 #[repr(u32)]
 #[derive(Copy, Clone, Eq, Debug, PartialEq, Error, FromPrimitive)]
-pub enum SyscallErrorCode {
+pub enum ErrorNumber {
     IllegalArgument = 1,
     IllegalActor = 2,
     LimitExceeded = 3,
@@ -113,9 +113,9 @@ pub enum SyscallErrorCode {
     Serialization = 10,
 }
 
-impl std::fmt::Display for SyscallErrorCode {
+impl std::fmt::Display for ErrorNumber {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        use SyscallErrorCode::*;
+        use ErrorNumber::*;
         f.write_str(match *self {
             IllegalArgument => "illegal argument",
             IllegalActor => "illegal actor",

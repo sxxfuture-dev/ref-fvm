@@ -9,7 +9,7 @@ use fvm_shared::crypto::randomness::DomainSeparationTag;
 use fvm_shared::crypto::signature::Signature;
 use fvm_shared::econ::TokenAmount;
 use fvm_shared::encoding::{to_vec, Cbor, RawBytes, DAG_CBOR};
-use fvm_shared::error::{ExitCode, SyscallErrorCode};
+use fvm_shared::error::{ErrorNumber, ExitCode};
 use fvm_shared::piece::PieceInfo;
 use fvm_shared::randomness::Randomness;
 use fvm_shared::sector::{
@@ -243,16 +243,16 @@ where
                 }
             }
             Err(err) => Err(match err {
-                SyscallErrorCode::NotFound => {
+                ErrorNumber::NotFound => {
                     actor_error!(SysErrInvalidReceiver; "receiver not found")
                 }
-                SyscallErrorCode::InsufficientFunds => {
+                ErrorNumber::InsufficientFunds => {
                     actor_error!(SysErrInsufficientFunds; "not enough funds")
                 }
-                SyscallErrorCode::LimitExceeded => {
+                ErrorNumber::LimitExceeded => {
                     actor_error!(SysErrForbidden; "recursion limit exceeded")
                 }
-                SyscallErrorCode::IllegalActor => {
+                ErrorNumber::IllegalActor => {
                     actor_error!(SysErrActorPanic; "called actor paniced")
                 }
                 err => panic!("unexpected error: {}", err),
@@ -268,7 +268,7 @@ where
         fvm::actor::create_actor(actor_id, &code_id).map_err(|e| {
             ActorError::new(
                 match e {
-                    SyscallErrorCode::IllegalArgument => ExitCode::SysErrIllegalArgument,
+                    ErrorNumber::IllegalArgument => ExitCode::SysErrIllegalArgument,
                     _ => panic!("create failed with unknown error: {}", e),
                 },
                 "failed to create actor".into(),

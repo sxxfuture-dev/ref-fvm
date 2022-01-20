@@ -44,7 +44,7 @@ macro_rules! fvm_syscalls {
     // Returns no values.
     (module = $module:literal; $(#[$attrs:meta])* $v:vis fn $name:ident($($args:ident : $args_ty:ty),*$(,)?) -> Result<()>; $($rest:tt)*) => {
         $(#[$attrs])*
-        $v unsafe fn $name($($args:$args_ty),*) -> Result<(), fvm_shared::error::SyscallErrorCode> {
+        $v unsafe fn $name($($args:$args_ty),*) -> Result<(), fvm_shared::error::ErrorNumber> {
             #[link(wasm_import_module = $module)]
             extern "C" {
                 #[link_name = stringify!($name)]
@@ -67,7 +67,7 @@ macro_rules! fvm_syscalls {
     // Returns a value.
     (module = $module:literal; $(#[$attrs:meta])* $v:vis fn $name:ident($($args:ident : $args_ty:ty),*$(,)?) -> Result<$ret:ty>; $($rest:tt)*) => {
         $(#[$attrs])*
-        $v unsafe fn $name($($args:$args_ty),*) -> Result<$ret, fvm_shared::error::SyscallErrorCode> {
+        $v unsafe fn $name($($args:$args_ty),*) -> Result<$ret, fvm_shared::error::ErrorNumber> {
             #[link(wasm_import_module = $module)]
             extern "C" {
                 #[link_name = stringify!($name)]

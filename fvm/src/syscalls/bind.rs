@@ -1,6 +1,6 @@
 use std::mem;
 
-use fvm_shared::error::SyscallErrorCode;
+use fvm_shared::error::ErrorNumber;
 use wasmtime::{Caller, Linker, Trap, WasmTy};
 
 use super::error::trap_from_error;
@@ -133,7 +133,7 @@ macro_rules! impl_bind_syscalls {
                         // We need to check to make sure we can store the return value _before_ we do anything.
                         if (ret as u64) > (ctx.memory.len() as u64)
                             || ctx.memory.len() - (ret as usize) < mem::size_of::<Ret::Value>() {
-                            let code = SyscallErrorCode::IllegalArgument;
+                            let code = ErrorNumber::IllegalArgument;
                             ctx.kernel.push_syscall_error(SyscallError(format!("no space for return value"), code));
                             return Ok(code as u32);
                         }

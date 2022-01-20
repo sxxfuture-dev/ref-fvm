@@ -10,7 +10,7 @@ use fvm_shared::address::Address;
 use fvm_shared::clock::ChainEpoch;
 use fvm_shared::crypto::signature::Signature;
 use fvm_shared::encoding::{Cbor, DAG_CBOR};
-use fvm_shared::error::SyscallErrorCode::IllegalArgument;
+use fvm_shared::error::ErrorNumber::IllegalArgument;
 use fvm_shared::piece::PieceInfo;
 use fvm_shared::sector::{
     AggregateSealVerifyProofAndInfos, RegisteredSealProof, SealVerifyInfo, WindowPoStVerifyInfo,

@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 use derive_more::Display;
-use fvm_shared::error::SyscallErrorCode;
+use fvm_shared::error::ErrorNumber;
 
 /// Execution result.
 pub type Result<T> = std::result::Result<T, ExecutionError>;
@@ -10,11 +10,11 @@ pub type Result<T> = std::result::Result<T, ExecutionError>;
 #[macro_export]
 macro_rules! syscall_error {
     // Error with only one stringable expression
-    ( $code:ident; $msg:expr ) => { $crate::kernel::SyscallError::new(fvm_shared::error::SyscallErrorCode::$code, $msg) };
+    ( $code:ident; $msg:expr ) => { $crate::kernel::SyscallError::new(fvm_shared::error::ErrorNumber::$code, $msg) };
 
     // String with positional arguments
     ( $code:ident; $msg:literal $(, $ex:expr)+ ) => {
-        $crate::kernel::SyscallError::new(fvm_shared::error::SyscallErrorCode::$code, format_args!($msg, $($ex,)*))
+        $crate::kernel::SyscallError::new(fvm_shared::error::ErrorNumber::$code, format_args!($msg, $($ex,)*))
     };
 
     // Error with only one stringable expression, with comma separator
@@ -80,7 +80,7 @@ pub trait ClassifyResult: Sized {
     fn or_fatal(self) -> Result<Self::Value>
     where
         Self::Error: Into<anyhow::Error>;
-    fn or_error(self, code: SyscallErrorCode) -> Result<Self::Value>
+    fn or_error(self, code: ErrorNumber) -> Result<Self::Value>
     where
         Self::Error: Display;
 
@@ -88,7 +88,7 @@ pub trait ClassifyResult: Sized {
     where
         Self::Error: Display,
     {
-        self.or_error(SyscallErrorCode::IllegalArgument)
+        self.or_error(ErrorNumber::IllegalArgument)
     }
 }
 
@@ -102,7 +102,7 @@ impl<T, E> ClassifyResult for std::result::Result<T, E> {
     {
         self.map_err(|e| ExecutionError::Fatal(e.into()))
     }
-    fn or_error(self, code: SyscallErrorCode) -> Result<Self::Value>
+    fn or_error(self, code: ErrorNumber) -> Result<Self::Value>
     where
         Self::Error: Display,
     {
@@ -181,10 +181,10 @@ impl From<ExecutionError> for anyhow::Error {
 /// Automatic conversions from String are provided, with no advised exit code.
 #[derive(thiserror::Error, Debug, Clone)]
 #[error("syscall error: {0} (exit_code={1:?})")]
-pub struct SyscallError(pub String, pub SyscallErrorCode);
+pub struct SyscallError(pub String, pub ErrorNumber);
 
 impl SyscallError {
-    pub fn new<D: Display>(c: SyscallErrorCode, d: D) -> Self {
+    pub fn new<D: Display>(c: ErrorNumber, d: D) -> Self {
         SyscallError(d.to_string(), c)
     }
 }

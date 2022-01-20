@@ -4,7 +4,7 @@ use fvm_shared::address::Address;
 use fvm_shared::blockstore::{Blockstore, Buffered};
 use fvm_shared::clock::ChainEpoch;
 use fvm_shared::econ::TokenAmount;
-use fvm_shared::error::SyscallErrorCode;
+use fvm_shared::error::ErrorNumber;
 use fvm_shared::version::NetworkVersion;
 use fvm_shared::ActorID;
 use log::Level::Trace;
@@ -252,13 +252,13 @@ where
             .state_tree
             .get_actor_id(from)?
             .context("cannot transfer from non-existent sender")
-            .or_error(SyscallErrorCode::InsufficientFunds)?;
+            .or_error(ErrorNumber::InsufficientFunds)?;
 
         let mut to_actor = self
             .state_tree
             .get_actor_id(to)?
             .context("cannot transfer to non-existent receiver")
-            .or_error(SyscallErrorCode::NotFound)?;
+            .or_error(ErrorNumber::NotFound)?;
 
         from_actor.deduct_funds(value).map_err(|e| {
             syscall_error!(InsufficientFunds;

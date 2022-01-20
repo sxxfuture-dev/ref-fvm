@@ -1,7 +1,7 @@
 use cid::Cid;
 use fvm_shared::address::Address;
 use fvm_shared::econ::TokenAmount;
-use fvm_shared::error::SyscallErrorCode;
+use fvm_shared::error::ErrorNumber;
 
 use crate::error::{ActorDeleteError, NoStateError};
 use crate::{sys, MAX_CID_LEN};
@@ -13,7 +13,7 @@ pub fn root() -> Result<Cid, NoStateError> {
     let mut buf = [0u8; MAX_CID_LEN];
     unsafe {
         let len = sys::sself::root(buf.as_mut_ptr(), buf.len() as u32).map_err(|e| match e {
-            SyscallErrorCode::IllegalActor => NoStateError,
+            ErrorNumber::IllegalActor => NoStateError,
             e => panic!("unexpected error from `self::root` syscall: {}", e),
         })? as usize;
 
@@ -39,7 +39,7 @@ pub fn set_root(cid: &Cid) -> Result<(), NoStateError> {
 
     unsafe {
         sys::sself::set_root(buf.as_ptr()).map_err(|e| match e {
-            SyscallErrorCode::IllegalActor => NoStateError,
+            ErrorNumber::IllegalActor => NoStateError,
             e => panic!("unexpected error from `self::set_root` syscall: {}", e),
         })
     }
@@ -63,8 +63,8 @@ pub fn self_destruct(beneficiary: &Address) -> Result<(), ActorDeleteError> {
     let bytes = beneficiary.to_bytes();
     unsafe {
         sys::sself::self_destruct(bytes.as_ptr(), bytes.len() as u32).map_err(|e| match e {
-            SyscallErrorCode::IllegalActor => ActorDeleteError::BeneficiaryIsSelf,
-            SyscallErrorCode::NotFound => ActorDeleteError::BeneficiaryDoesNotExist,
+            ErrorNumber::IllegalActor => ActorDeleteError::BeneficiaryIsSelf,
+            ErrorNumber::NotFound => ActorDeleteError::BeneficiaryDoesNotExist,
             _ => panic!("unexpected error from `self::self_destruct` syscall: {}", e),
         })
     }

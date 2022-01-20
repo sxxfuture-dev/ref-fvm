@@ -16,7 +16,7 @@ use fvm_shared::commcid::{
 };
 use fvm_shared::econ::TokenAmount;
 use fvm_shared::encoding::{blake2b_256, bytes_32, to_vec, RawBytes};
-use fvm_shared::error::{ExitCode, SyscallErrorCode};
+use fvm_shared::error::{ErrorNumber, ExitCode};
 use fvm_shared::piece::{zero_piece_commitment, PaddedPieceSize};
 use fvm_shared::sector::SectorInfo;
 use fvm_shared::{ActorID, FILECOIN_PRECISION};
@@ -201,7 +201,7 @@ where
         Ok(self
             .get_self()?
             .context("state root requested after actor deletion")
-            .or_error(SyscallErrorCode::IllegalActor)?
+            .or_error(ErrorNumber::IllegalActor)?
             .state)
     }
 
@@ -235,7 +235,7 @@ where
             let beneficiary_id = self
                 .resolve_address(beneficiary)?
                 .context("beneficiary doesn't exist")
-                .or_error(SyscallErrorCode::IllegalArgument)?;
+                .or_error(ErrorNumber::IllegalArgument)?;
 
             if beneficiary_id == self.actor_id {
                 return Err(

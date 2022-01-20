@@ -31,4 +31,4 @@ pub(crate) fn status_code_to_bool(code: i32) -> bool {
 ///
 /// Error messages don't make it across the boundary, but are logged at the FVM
 /// level for debugging and informational purposes.
-pub type SyscallResult<T> = core::result::Result<T, fvm_shared::error::SyscallErrorCode>;
+pub type SyscallResult<T> = core::result::Result<T, fvm_shared::error::ErrorNumber>;

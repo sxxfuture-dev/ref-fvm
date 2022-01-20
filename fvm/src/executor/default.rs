@@ -6,7 +6,7 @@ use cid::Cid;
 use fvm_shared::address::Address;
 use fvm_shared::bigint::{BigInt, Sign};
 use fvm_shared::econ::TokenAmount;
-use fvm_shared::error::{ExitCode, SyscallErrorCode};
+use fvm_shared::error::{ErrorNumber, ExitCode};
 use fvm_shared::message::Message;
 use fvm_shared::receipt::Receipt;
 use fvm_shared::ActorID;
@@ -117,10 +117,10 @@ where
             },
             Err(ExecutionError::Syscall(SyscallError(errmsg, err_code))) => {
                 let exit_code = match err_code {
-                    SyscallErrorCode::IllegalActor => ExitCode::SysErrIllegalActor,
-                    SyscallErrorCode::AssertionFailed => ExitCode::SysErrIllegalArgument,
-                    SyscallErrorCode::InsufficientFunds => ExitCode::SysErrInsufficientFunds,
-                    SyscallErrorCode::NotFound => ExitCode::SysErrInvalidReceiver,
+                    ErrorNumber::IllegalActor => ExitCode::SysErrIllegalActor,
+                    ErrorNumber::AssertionFailed => ExitCode::SysErrIllegalArgument,
+                    ErrorNumber::InsufficientFunds => ExitCode::SysErrInsufficientFunds,
+                    ErrorNumber::NotFound => ExitCode::SysErrInvalidReceiver,
                     code => {
                         return Err(anyhow!(
                             "unexpected syscall error when processing message: {} ({})",

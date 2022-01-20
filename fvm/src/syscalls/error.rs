@@ -3,7 +3,7 @@ use std::sync::Mutex;
 
 use anyhow::Context as _;
 use derive_more::Display;
-use fvm_shared::error::{ExitCode, SyscallErrorCode};
+use fvm_shared::error::{ErrorNumber, ExitCode};
 use num_traits::FromPrimitive;
 use wasmtime::Trap;
 
@@ -40,7 +40,7 @@ pub fn unwrap_trap(e: Trap) -> crate::kernel::Result<InvocationResult> {
     }
 
     if e.trap_code().is_some() {
-        return Err(SyscallError(e.to_string(), SyscallErrorCode::IllegalActor).into());
+        return Err(SyscallError(e.to_string(), ErrorNumber::IllegalActor).into());
     }
 
     // Do whatever we can to pull the original error back out (if it exists).
