@@ -1,4 +1,5 @@
 use std::convert::TryFrom;
+use std::path::Path;
 
 use cid::Cid;
 use fvm::call_manager::{CallManager, DefaultCallManager, InvocationResult};
@@ -61,7 +62,7 @@ impl TestMachine<Box<DefaultMachine<MemoryBlockstore, TestExterns>>> {
 
         let mut wasm_conf = wasmtime::Config::default();
         wasm_conf
-            .cache_config_load_default()
+            .cache_config_load(Path::new("testing/conformance/wasm-testing-config-uncompressed-cache.toml"))
             .expect("failed to load cache config");
 
         let machine = DefaultMachine::new(
